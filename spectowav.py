@@ -1,5 +1,6 @@
 
 import IPython.display
+import griffinlim as gl 
 from ipywidgets import interact, interactive, fixed
 
 # Packages we're using
@@ -45,8 +46,10 @@ def overlap(X, window_size, window_step):
     if window_size % 2 != 0:
         raise ValueError("Window size must be even!")
     # Make sure there are an even number of windows before stridetricks
-
+    print ("XXXXXXXXXXXX")
+    print (X)
     X=np.ravel(X)
+    print (X)
     append = np.zeros((window_size - len(X) % window_size))
     X = np.hstack((X, append))
 
@@ -360,8 +363,22 @@ shorten_factor = 10  # how much should we compress the x-axis (time)
 start_freq = 300  # Hz # What frequency to start sampling our melS from
 end_freq = 8000  # Hz # What frequency to stop sampling our melS from
 
+
+
+##########################################################
+
+
+
 # Grab your wav and filter it
-mywav = "LZ-stairway.wav"
+
+song = AudioSegment.from_wav("inny.wav")
+#have to be in miliseconds
+ten_sec = 30 * 1000
+
+first_10_sec = song[:ten_sec]
+first_10_sec.export('30sec.wav', format='wav')
+
+mywav = '30sec.wav'
 rate, data = wavfile.read(mywav)
 data = butter_bandpass_filter(data, lowcut, highcut, rate, order=1)
 # Only use a short clip for our demo
@@ -397,7 +414,7 @@ plt.show()
 
 # Invert from the spectrogram back to a waveform
 recovered_audio_orig = invert_pretty_spectrogram(
-    wav_spectrogram, fft_size=fft_size, step_size=step_size, log=True, n_iter=10
+    wav_spectrogram, fft_size=fft_size, step_size=int(step_size/2), log=True, n_iter=10
 )
 
 # Make a spectrogram of the inverted audio (for visualization)
@@ -422,7 +439,5 @@ plt.show()
 
 print ("powinno sie zapisac i grac")
 print (recovered_audio_orig)
-scipy.io.wavfile.write('nowy3.wav', rate, recovered_audio_orig)
-#librosa.output.write_wav('nowy.wav', recovered_audio_orig, rate)
-IPython.display.Audio(data=recovered_audio_orig, rate=rate)  # play the audio
-IPython.display.Audio("LZ-stairway.wav", autoplay = True)
+scipy.io.wavfile.write('nowy.wav', rate, recovered_audio_orig)
+
